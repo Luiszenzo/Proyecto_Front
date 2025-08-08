@@ -1,0 +1,128 @@
+<div class="delivery-container">
+  <!-- Panel de Control del Repartidor - Ahora con diseño de tarjeta -->
+  <div class="delivery-header">
+    <div class="delivery-info">
+      <h2><i class="fas fa-truck"></i> Panel del Repartidor</h2>
+      <div class="delivery-details">
+        <div class="detail-item">
+          <span class="detail-label">Nombre:</span>
+          <span class="detail-value">{{ deliveryPerson.name || 'Cargando...' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Teléfono:</span>
+          <span class="detail-value">{{ deliveryPerson.phone || 'N/A' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Estado:</span>
+          <span class="detail-value status-badge" [class]="isAvailable ? 'status-available' : 'status-busy'">
+            {{ isAvailable ? 'Disponible' : 'Ocupado' }}
+          </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Paquetes:</span>
+          <span class="detail-value package-count">{{ assignedPackages.length }}</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="delivery-controls">
+      <button 
+        (click)="toggleAvailability()" 
+        [class]="isAvailable ? 'btn-busy' : 'btn-available'">
+        <i [class]="isAvailable ? 'fas fa-pause' : 'fas fa-play'"></i>
+        {{ isAvailable ? 'Marcar como Ocupado' : 'Marcar como Disponible' }}
+      </button>
+      <div class="controls-row">
+        <button (click)="moveToRandomLocation()" class="btn-move">
+          <i class="fas fa-walking"></i> Simular Movimiento
+        </button>
+        <button (click)="refreshData()" class="btn-refresh">
+          <i class="fas fa-sync-alt"></i> Actualizar
+        </button>
+      <!-- Add this button to the delivery-controls div -->
+      <button (click)="toggleLocationSharing()" 
+        [class]="isLocationSharing ? 'btn-location-on' : 'btn-location-off'">
+        <i class="fas fa-location-arrow"></i> 
+        {{ isLocationSharing ? 'Desactivar Ubicación' : 'Activar Ubicación' }}
+      </button>
+      </div>
+      <button (click)="logout()" class="btn-logout">
+        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenido principal en diseño de dos columnas para pantallas grandes -->
+  <div class="main-content">
+    <!-- Mapa del Repartidor -->
+    <div class="map-section">
+      <div class="section-header">
+        <h3><i class="fas fa-map-marked-alt"></i> Mi Ubicación</h3>
+      </div>
+      <div class="map-container">
+        <div id="delivery-map"></div>
+      </div>
+    </div>
+
+    <!-- Lista de Paquetes Asignados -->
+    <div class="packages-section">
+      <div class="section-header">
+        <h3><i class="fas fa-box"></i> Mis Paquetes Asignados</h3>
+        <span class="package-counter">{{ assignedPackages.length }} paquetes</span>
+      </div>
+      
+      <div class="packages-list" *ngIf="assignedPackages.length > 0; else noPackages">
+        <div class="package-card" *ngFor="let package of assignedPackages" [ngClass]="'status-' + package.status">
+          <div class="package-header">
+            <h4>Paquete #{{ package.id }}</h4>
+            <span class="package-status" [ngClass]="'status-badge-' + package.status">
+              {{ package.status === 'pending' ? 'Pendiente' : 
+                 package.status === 'in_transit' ? 'En Tránsito' : 'Entregado' }}
+            </span>
+          </div>
+          <div class="package-details">
+            <div class="detail-row">
+              <i class="fas fa-user"></i>
+              <span>{{ package.recipient }}</span>
+            </div>
+            <div class="detail-row">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>{{ package.address }}</span>
+            </div>
+            <div class="detail-row">
+              <i class="fas fa-calendar-alt"></i>
+              <span>{{ package.created_at | date:'short' }}</span>
+            </div>
+          </div>
+          <div class="package-actions">
+            <button 
+              *ngIf="package.status === 'pending'"
+              (click)="updatePackageStatus(package.id, 'in_transit')"
+              class="btn-transit">
+              <i class="fas fa-truck"></i> Iniciar Entrega
+            </button>
+            <button 
+              *ngIf="package.status === 'in_transit'"
+              (click)="updatePackageStatus(package.id, 'delivered')"
+              class="btn-delivered">
+              <i class="fas fa-check-circle"></i> Marcar Entregado
+            </button>
+            <span *ngIf="package.status === 'delivered'" class="delivered-badge">
+              <i class="fas fa-check-circle"></i> Entregado
+            </span>
+          </div>
+        </div>
+      </div>
+      
+      <ng-template #noPackages>
+        <div class="no-packages">
+          <i class="fas fa-inbox fa-3x"></i>
+          <p>No tienes paquetes asignados en este momento.</p>
+          <button (click)="refreshData()" class="btn-refresh-alt">
+            <i class="fas fa-sync-alt"></i> Actualizar
+          </button>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
