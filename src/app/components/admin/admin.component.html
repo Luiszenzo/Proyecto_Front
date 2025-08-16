@@ -17,13 +17,82 @@
     <section class="map-section">
       <h2>Mapa de Entregas</h2>
       <div class="map-container">
-        <app-map></app-map>
+        <!-- Add this to your admin.component.html where the map component is used -->
+        <app-map 
+          [selectedDeliveryPerson]="selectedDeliveryPerson"
+          #mapComponent
+          (init)="onMapComponentInit(mapComponent)">
+        </app-map>
       </div>
     </section>
     
     <section class="packages-section">
       <h2>Lista de Paquetes</h2>
       <app-package-table></app-package-table>
+    </section>
+    
+    <!-- Nueva sección para listar repartidores -->
+    <!-- Add this section to your HTML if it's not already there -->
+    <section class="delivery-personnel-section">
+      <h2><i class="icon">🚚</i> Lista de Repartidores</h2>
+      <div class="delivery-list">
+        <div class="delivery-list-header">
+          <div class="delivery-header-item">ID</div>
+          <div class="delivery-header-item">Nombre</div>
+          <div class="delivery-header-item">Teléfono</div>
+          <div class="delivery-header-item">Estado</div>
+          <div class="delivery-header-item">Ubicación</div>
+          <div class="delivery-header-item">Última Actualización</div>
+          <div class="delivery-header-item">Paquetes Asignados</div>
+          <div class="delivery-header-item">Acciones</div>
+        </div>
+        
+        <div class="delivery-list-body">
+          <div class="delivery-item" *ngFor="let person of deliveryPersonnel">
+            <div class="delivery-data">{{ person.id }}</div>
+            <div class="delivery-data">{{ person.name }}</div>
+            <div class="delivery-data">{{ person.phone || 'N/A' }}</div>
+            <div class="delivery-data">
+              <span class="status-badge" [ngClass]="person.status === 'available' ? 'status-available' : 'status-busy'">
+                {{ person.status === 'available' ? 'Disponible' : 'Ocupado' }}
+              </span>
+            </div>
+            <div class="delivery-data">
+              <span *ngIf="person.latitude && person.longitude">
+                {{ person.latitude | number:'1.6-6' }}, {{ person.longitude | number:'1.6-6' }}
+              </span>
+              <span *ngIf="!person.latitude || !person.longitude">Sin ubicación</span>
+            </div>
+            <div class="delivery-data">
+              {{ person.last_update | date:'dd/MM/yyyy HH:mm' }}
+            </div>
+            <div class="delivery-data">
+              <span class="package-count-badge" 
+                [ngClass]="{
+                  'high-count': (person.packages?.length > 3), 
+                  'medium-count': (person.packages?.length > 1 && person.packages?.length <= 3), 
+                  'low-count': (person.packages?.length <= 1 || !person.packages)
+                }">
+                {{ person.packages?.length || 0 }}
+                <span class="package-label">paquete{{ person.packages?.length !== 1 ? 's' : '' }}</span>
+              </span>
+            </div>
+            <!-- Make sure this button is correctly defined in your HTML -->
+            <div class="delivery-data delivery-actions">
+              <button class="btn-view" (click)="selectDeliveryPerson(person)">
+                <i class="icon">👁️</i> Ver
+              </button>
+              <button class="btn-location" (click)="navigateToDeliveryPerson(person)" *ngIf="person.latitude && person.longitude">
+                <i class="icon">🗺️</i> Ubicación
+              </button>
+            </div>
+          </div>
+          
+          <div class="no-deliveries" *ngIf="deliveryPersonnel.length === 0">
+            No hay repartidores registrados.
+          </div>
+        </div>
+      </div>
     </section>
   </div>
   
@@ -39,5 +108,89 @@
         (cancel)="showAddPackageModal = false">
       </app-add-package-form>
     </div>
+    <!-- Add this at the end of the file, before the closing </div> -->
+    
+    <!-- Modal para ver detalles del repartidor -->
+    <div class="modal" [class.show]="selectedDeliveryPerson !== null" (click)="closeDeliveryPersonModal($event)">
+      <div class="modal-content delivery-person-modal" (click)="$event.stopPropagation()" *ngIf="selectedDeliveryPerson">
+        <div class="modal-header">
+          <h3>Detalles del Repartidor</h3>
+          <button class="close-btn" (click)="selectedDeliveryPerson = null">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="delivery-person-details">
+            <div class="detail-row">
+              <span class="detail-label">ID:</span>
+              <span class="detail-value">{{ selectedDeliveryPerson.id }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Nombre:</span>
+              <span class="detail-value">{{ selectedDeliveryPerson.name }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Teléfono:</span>
+              <span class="detail-value">{{ selectedDeliveryPerson.phone || 'N/A' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Email:</span>
+              <span class="detail-value">{{ selectedDeliveryPerson.email || 'N/A' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Estado:</span>
+              <span class="detail-value status-badge" [ngClass]="selectedDeliveryPerson.status === 'available' ? 'status-available' : 'status-busy'">
+                {{ selectedDeliveryPerson.status === 'available' ? 'Disponible' : 'Ocupado' }}
+              </span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Ubicación:</span>
+              <span class="detail-value" *ngIf="selectedDeliveryPerson.latitude && selectedDeliveryPerson.longitude">
+                {{ selectedDeliveryPerson.latitude | number:'1.6-6' }}, 
+                {{ selectedDeliveryPerson.longitude | number:'1.6-6' }}
+                <span *ngIf="isRemoteLocation(selectedDeliveryPerson)" class="remote-location-badge">
+                  🌎 Ubicación remota
+                </span>
+              </span>
+              <span class="detail-value" *ngIf="!selectedDeliveryPerson.latitude || !selectedDeliveryPerson.longitude">Sin ubicación</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Última actualización:</span>
+              <span class="detail-value">{{ selectedDeliveryPerson.last_update | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Paquetes asignados:</span>
+              <span class="detail-value">{{ selectedDeliveryPerson.packages?.length || 0 }}</span>
+            </div>
+          </div>
+          
+          <div class="delivery-person-map" *ngIf="selectedDeliveryPerson.latitude && selectedDeliveryPerson.longitude">
+            <h4>Ubicación en el mapa</h4>
+            <div id="delivery-person-detail-map" style="height: 300px; width: 100%; border-radius: 8px;"></div>
+          </div>
+          
+          <div class="delivery-person-packages" *ngIf="selectedDeliveryPerson.packages?.length > 0">
+            <h4>Paquetes asignados</h4>
+            <table class="packages-mini-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Destinatario</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let pkg of selectedDeliveryPerson.packages">
+                  <td>{{ pkg.id }}</td>
+                  <td>{{ pkg.destinatario || pkg.recipient }}</td>
+                  <td>
+                    <span [class]="'status-' + pkg.status">
+                      {{ pkg.status }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>

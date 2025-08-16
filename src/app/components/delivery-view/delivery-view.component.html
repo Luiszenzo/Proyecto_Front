@@ -1,128 +1,202 @@
-<div class="delivery-container">
-  <!-- Panel de Control del Repartidor - Ahora con diseño de tarjeta -->
-  <div class="delivery-header">
-    <div class="delivery-info">
-      <h2><i class="fas fa-truck"></i> Panel del Repartidor</h2>
-      <div class="delivery-details">
-        <div class="detail-item">
-          <span class="detail-label">Nombre:</span>
-          <span class="detail-value">{{ deliveryPerson.name || 'Cargando...' }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Teléfono:</span>
-          <span class="detail-value">{{ deliveryPerson.phone || 'N/A' }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Estado:</span>
-          <span class="detail-value status-badge" [class]="isAvailable ? 'status-available' : 'status-busy'">
-            {{ isAvailable ? 'Disponible' : 'Ocupado' }}
-          </span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Paquetes:</span>
-          <span class="detail-value package-count">{{ assignedPackages.length }}</span>
-        </div>
+<div class="delivery-dashboard">
+  <p-toolbar styleClass="dashboard-header">
+    <ng-template pTemplate="left">
+      <h1><i class="pi pi-truck"></i> Panel del Repartidor</h1>
+    </ng-template>
+    <ng-template pTemplate="right">
+      <div class="delivery-status">
+        <p-tag 
+          [value]="isAvailable ? 'Disponible' : 'Ocupado'" 
+          [severity]="isAvailable ? 'success' : 'danger'"
+          [rounded]="true"
+          styleClass="status-tag">
+        </p-tag>
       </div>
-    </div>
-    
-    <div class="delivery-controls">
-      <button 
-        (click)="toggleAvailability()" 
-        [class]="isAvailable ? 'btn-busy' : 'btn-available'">
-        <i [class]="isAvailable ? 'fas fa-pause' : 'fas fa-play'"></i>
-        {{ isAvailable ? 'Marcar como Ocupado' : 'Marcar como Disponible' }}
-      </button>
-      <div class="controls-row">
-        <button (click)="moveToRandomLocation()" class="btn-move">
-          <i class="fas fa-walking"></i> Simular Movimiento
-        </button>
-        <button (click)="refreshData()" class="btn-refresh">
-          <i class="fas fa-sync-alt"></i> Actualizar
-        </button>
-      <!-- Add this button to the delivery-controls div -->
-      <button (click)="toggleLocationSharing()" 
-        [class]="isLocationSharing ? 'btn-location-on' : 'btn-location-off'">
-        <i class="fas fa-location-arrow"></i> 
-        {{ isLocationSharing ? 'Desactivar Ubicación' : 'Activar Ubicación' }}
-      </button>
-      </div>
-      <button (click)="logout()" class="btn-logout">
-        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-      </button>
-    </div>
-  </div>
-
-  <!-- Contenido principal en diseño de dos columnas para pantallas grandes -->
-  <div class="main-content">
-    <!-- Mapa del Repartidor -->
-    <div class="map-section">
-      <div class="section-header">
-        <h3><i class="fas fa-map-marked-alt"></i> Mi Ubicación</h3>
-      </div>
-      <div class="map-container">
-        <div id="delivery-map"></div>
-      </div>
-    </div>
-
-    <!-- Lista de Paquetes Asignados -->
-    <div class="packages-section">
-      <div class="section-header">
-        <h3><i class="fas fa-box"></i> Mis Paquetes Asignados</h3>
-        <span class="package-counter">{{ assignedPackages.length }} paquetes</span>
+    </ng-template>
+  </p-toolbar>
+  
+  <div class="dashboard-content">
+    <div class="grid">
+      <!-- Información del repartidor -->
+      <div class="col-12 lg:col-4">
+        <p-card styleClass="info-card" header="Información Personal">
+          <div class="delivery-info">
+            <div class="info-item">
+              <span class="info-label"><i class="pi pi-user"></i> Nombre:</span>
+              <span class="info-value">{{ deliveryPerson.name || 'Cargando...' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label"><i class="pi pi-phone"></i> Teléfono:</span>
+              <span class="info-value">{{ deliveryPerson.phone || 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label"><i class="pi pi-box"></i> Paquetes:</span>
+              <span class="info-value package-count">{{ assignedPackages.length }}</span>
+            </div>
+          </div>
+          
+          <div class="delivery-controls">
+            <button 
+              pButton 
+              pRipple 
+              [icon]="isAvailable ? 'pi pi-pause' : 'pi pi-play'" 
+              [label]="isAvailable ? 'Marcar como Ocupado' : 'Marcar como Disponible'" 
+              [class]="isAvailable ? 'p-button-danger' : 'p-button-success'" 
+              (click)="toggleAvailability()"
+              class="p-button-raised control-button">
+            </button>
+            
+            <div class="controls-row">
+              <button 
+                pButton 
+                pRipple 
+                icon="pi pi-map-marker" 
+                label="Simular Movimiento" 
+                class="p-button-info p-button-raised custom-btn-info" 
+                (click)="moveToRandomLocation()">
+              </button>
+              <button 
+                pButton 
+                pRipple 
+                icon="pi pi-refresh" 
+                label="Actualizar" 
+                class="p-button-secondary p-button-raised custom-btn-secondary" 
+                (click)="refreshData()">
+              </button>
+            </div>
+            
+            <button 
+              pButton 
+              pRipple 
+              icon="pi pi-map" 
+              [label]="isLocationSharing ? 'Desactivar Ubicación' : 'Activar Ubicación'" 
+              [class]="isLocationSharing ? 'p-button-success custom-btn-success' : 'p-button-secondary custom-btn-secondary'" 
+              class="p-button-raised control-button"
+              (click)="toggleLocationSharing()">
+            </button>
+            
+            <button 
+              pButton 
+              pRipple 
+              icon="pi pi-sign-out" 
+              label="Cerrar Sesión" 
+              class="p-button-danger p-button-raised control-button custom-btn-danger" 
+              (click)="logout()">
+            </button>
+          </div>
+        </p-card>
       </div>
       
-      <div class="packages-list" *ngIf="assignedPackages.length > 0; else noPackages">
-        <div class="package-card" *ngFor="let package of assignedPackages" [ngClass]="'status-' + package.status">
-          <div class="package-header">
-            <h4>Paquete #{{ package.id }}</h4>
-            <span class="package-status" [ngClass]="'status-badge-' + package.status">
-              {{ package.status === 'pending' ? 'Pendiente' : 
-                 package.status === 'in_transit' ? 'En Tránsito' : 'Entregado' }}
-            </span>
+      <!-- Mapa -->
+      <div class="col-12 lg:col-8">
+        <p-card styleClass="map-card" header="Mi Ubicación">
+          <div class="map-container">
+            <div id="delivery-map"></div>
           </div>
-          <div class="package-details">
-            <div class="detail-row">
-              <i class="fas fa-user"></i>
-              <span>{{ package.recipient }}</span>
-            </div>
-            <div class="detail-row">
-              <i class="fas fa-map-marker-alt"></i>
-              <span>{{ package.address }}</span>
-            </div>
-            <div class="detail-row">
-              <i class="fas fa-calendar-alt"></i>
-              <span>{{ package.created_at | date:'short' }}</span>
-            </div>
-          </div>
-          <div class="package-actions">
-            <button 
-              *ngIf="package.status === 'pending'"
-              (click)="updatePackageStatus(package.id, 'in_transit')"
-              class="btn-transit">
-              <i class="fas fa-truck"></i> Iniciar Entrega
-            </button>
-            <button 
-              *ngIf="package.status === 'in_transit'"
-              (click)="updatePackageStatus(package.id, 'delivered')"
-              class="btn-delivered">
-              <i class="fas fa-check-circle"></i> Marcar Entregado
-            </button>
-            <span *ngIf="package.status === 'delivered'" class="delivered-badge">
-              <i class="fas fa-check-circle"></i> Entregado
-            </span>
-          </div>
-        </div>
+        </p-card>
       </div>
       
-      <ng-template #noPackages>
-        <div class="no-packages">
-          <i class="fas fa-inbox fa-3x"></i>
-          <p>No tienes paquetes asignados en este momento.</p>
-          <button (click)="refreshData()" class="btn-refresh-alt">
-            <i class="fas fa-sync-alt"></i> Actualizar
-          </button>
-        </div>
-      </ng-template>
+      <!-- Paquetes asignados -->
+      <div class="col-12">
+        <p-card styleClass="packages-card" header="Mis Paquetes Asignados">
+          <p-toolbar styleClass="packages-toolbar">
+            <ng-template pTemplate="left">
+              <span class="package-counter"><i class="pi pi-box"></i> {{ assignedPackages.length }} paquetes</span>
+            </ng-template>
+            <ng-template pTemplate="right">
+              <button 
+                pButton 
+                pRipple 
+                icon="pi pi-refresh" 
+                class="p-button-text p-button-rounded custom-refresh-btn" 
+                (click)="refreshData()">
+              </button>
+            </ng-template>
+          </p-toolbar>
+          
+          <div class="packages-list" *ngIf="assignedPackages.length > 0; else noPackages">
+            <p-card *ngFor="let package of assignedPackages" 
+                   styleClass="package-item" 
+                   [ngClass]="'status-' + package.status">
+              <ng-template pTemplate="header">
+                <div class="package-header" [ngClass]="'package-header-' + package.status">
+                  <h4>Paquete #{{ package.id }}</h4>
+                  <p-tag 
+                    [value]="package.status === 'pending' ? 'Pendiente' : 
+                            package.status === 'in_transit' ? 'En Tránsito' : 'Entregado'" 
+                    [severity]="package.status === 'pending' ? 'warning' : 
+                               package.status === 'in_transit' ? 'info' : 'success'"
+                    [rounded]="true">
+                  </p-tag>
+                </div>
+              </ng-template>
+              
+              <div class="package-details">
+                <div class="detail-row">
+                  <i class="pi pi-user" [ngClass]="'text-' + package.status"></i>
+                  <span>{{ package.recipient }}</span>
+                </div>
+                <div class="detail-row">
+                  <i class="pi pi-map-marker" [ngClass]="'text-' + package.status"></i>
+                  <span>{{ package.address }}</span>
+                </div>
+                <div class="detail-row">
+                  <i class="pi pi-calendar" [ngClass]="'text-' + package.status"></i>
+                  <span>{{ package.created_at | date:'short' }}</span>
+                </div>
+              </div>
+              
+              <ng-template pTemplate="footer">
+                <div class="package-actions">
+                  <button 
+                    *ngIf="package.status === 'pending'"
+                    pButton 
+                    pRipple 
+                    icon="pi pi-truck" 
+                    label="Iniciar Entrega" 
+                    class="p-button-info p-button-raised custom-btn-info" 
+                    (click)="updatePackageStatus(package.id, 'in_transit')">
+                  </button>
+                  <button 
+                    *ngIf="package.status === 'in_transit'"
+                    pButton 
+                    pRipple 
+                    icon="pi pi-check-circle" 
+                    label="Marcar Entregado" 
+                    class="p-button-success p-button-raised custom-btn-success" 
+                    (click)="updatePackageStatus(package.id, 'delivered')">
+                  </button>
+                  <div *ngIf="package.status === 'delivered'" class="delivered-badge">
+                    <i class="pi pi-check-circle"></i> Entregado
+                  </div>
+                </div>
+              </ng-template>
+            </p-card>
+          </div>
+          
+          <ng-template #noPackages>
+            <div class="no-packages">
+              <i class="pi pi-inbox empty-icon"></i>
+              <p>No tienes paquetes asignados en este momento.</p>
+              <button 
+                pButton 
+                pRipple 
+                icon="pi pi-refresh" 
+                label="Actualizar" 
+                class="p-button-outlined custom-btn-secondary" 
+                (click)="refreshData()">
+              </button>
+            </div>
+          </ng-template>
+        </p-card>
+      </div>
     </div>
   </div>
+</div>
+
+<!-- Notificación de actualización de ubicación -->
+<div id="location-notification" 
+     *ngIf="showLocationUpdateNotification" 
+     class="location-notification">
+  <i class="pi pi-map-marker"></i> {{ notificationMessage }}
 </div>

@@ -1,19 +1,25 @@
 /* Estilos generales */
 .admin-dashboard {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 20px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 2rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #333;
 }
 
 /* Estilos del encabezado */
 .dashboard-header {
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 100%);
+  padding: 1.5rem 2rem;
   margin-bottom: 25px;
-  padding: 20px 25px;
+  border: none;
+  border-radius: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .header-content {
@@ -25,10 +31,14 @@
 }
 
 .dashboard-header h1 {
-  color: #2c3e50;
+  color: white;
   margin: 0;
   font-size: 28px;
   font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .admin-controls {
@@ -42,35 +52,35 @@
   align-items: center;
   gap: 8px;
   padding: 12px 20px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   border: none;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .btn-primary {
-  background-color: #3498db;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: #2980b9;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
 
 .btn-secondary {
-  background-color: #f1f2f6;
-  color: #576574;
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+  color: white;
 }
 
 .btn-secondary:hover {
-  background-color: #e5e7eb;
+  background: linear-gradient(135deg, #475569 0%, #334155 100%);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
 
 .icon {
@@ -79,29 +89,107 @@
 
 /* Estilos del contenido principal */
 .dashboard-content {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
   display: grid;
   grid-template-columns: 1fr;
   gap: 25px;
 }
 
 .map-section, .packages-section {
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  padding: 25px;
+  /* Update the map section to prevent it from overlapping */
+  .map-section {
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    padding: 25px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    z-index: 1; /* Lower z-index to prevent overlapping */
+  }
+  
+  .map-container {
+    height: 450px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+    position: relative;
+    z-index: 1; /* Ensure map stays in its container */
+  }
+  
+  /* Adjust the grid layout to prevent overlapping */
+  @media (min-width: 992px) {
+    .dashboard-content {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+      grid-gap: 25px; /* Ensure proper spacing between grid items */
+    }
+    
+    .map-section {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    
+    .packages-section {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    
+    .delivery-personnel-section {
+      grid-column: 1 / span 2;
+      grid-row: 2;
+    }
+  }
+  
+  /* Ensure proper stacking context */
+  .dashboard-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 25px;
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* Ensure the header stays above other content */
+  .dashboard-header {
+    background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 100%);
+    padding: 1.5rem 2rem;
+    margin-bottom: 25px;
+    border: none;
+    border-radius: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 10; /* Higher z-index to stay on top */
+  }
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
 }
 
 .map-section h2, .packages-section h2 {
   color: #2c3e50;
   margin: 0 0 20px 0;
   font-size: 22px;
-  font-weight: 600;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.map-section h2 i, .packages-section h2 i {
+  color: #4a00e0;
+  font-size: 1.3rem;
 }
 
 .map-container {
-  height: 400px;
-  border-radius: 8px;
+  height: 450px;
+  border-radius: 12px;
   overflow: hidden;
+  border: 1px solid #e2e8f0;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
 /* Estilos del modal */
@@ -126,12 +214,12 @@
 
 .modal-content {
   background-color: white;
-  border-radius: 12px;
+  border-radius: 16px;
   width: 90%;
   max-width: 550px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
   animation: modalFadeIn 0.3s ease;
 }
 
@@ -152,6 +240,7 @@
   align-items: center;
   padding: 20px 25px;
   border-bottom: 1px solid #e0e0e0;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 }
 
 .modal-header h3 {
@@ -159,6 +248,9 @@
   color: #2c3e50;
   font-size: 20px;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .close-btn {
@@ -167,7 +259,7 @@
   font-size: 28px;
   cursor: pointer;
   color: #95a5a6;
-  transition: color 0.2s ease;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -179,60 +271,317 @@
 .close-btn:hover {
   color: #e74c3c;
   background-color: #f8f9fa;
+  transform: rotate(90deg);
+}
+
+/* Packages styling with improved list view */
+.packages-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  max-height: 600px;
+  overflow-y: auto;
+  padding: 10px 5px;
+}
+
+.packages-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.packages-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.packages-list::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+.packages-list::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+.package-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  border-left: 5px solid #4a00e0;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.package-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, transparent 70%, rgba(74, 0, 224, 0.1) 100%);
+  border-radius: 0 0 0 100px;
+  z-index: 0;
+}
+
+.package-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 
 /* Diseño responsivo */
 @media (min-width: 992px) {
   .dashboard-content {
     grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
   }
   
   .map-section {
     grid-column: 1;
+    grid-row: 1;
   }
   
   .packages-section {
     grid-column: 2;
+    grid-row: 1;
+  }
+  
+  .delivery-personnel-section {
+    grid-column: 1 / span 2;
+    grid-row: 2;
+    margin-top: 25px;
   }
 }
 
-@media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    align-items: flex-start;
+/* Make sure the delivery personnel section is visible */
+.delivery-personnel-section {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  padding: 25px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: block;
+  width: 100%;
+}
+
+.delivery-personnel-section h2 {
+  color: #2c3e50;
+  margin: 0 0 20px 0;
+  font-size: 22px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.delivery-list {
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.delivery-list-header {
+  display: grid;
+  grid-template-columns: 0.5fr 1.5fr 1.5fr 1fr 1.5fr 1fr 1fr;
+  background-color: #f8f9fa;
+  padding: 12px 16px;
+  font-weight: 600;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.delivery-item {
+  display: grid;
+  grid-template-columns: 0.5fr 1.5fr 1.5fr 1fr 1.5fr 1fr 1fr;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e9ecef;
+  transition: background-color 0.2s ease;
+}
+
+/* Package count badge styles - updated for better visibility */
+.package-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  color: white;
+  background-color: #4a00e0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  min-width: 80px;
+  text-align: center;
+}
+
+/* Different colors based on package count - updated for pending packages */
+.high-count {
+  background: linear-gradient(135deg, #ff4757 0%, #ff6b81 100%);
+}
+
+.medium-count {
+  background: linear-gradient(135deg, #ffa502 0%, #ffcc80 100%);
+}
+
+.low-count {
+  background: linear-gradient(135deg, #2ed573 0%, #7bed9f 100%);
+}
+
+/* Empty count style - updated */
+.package-count-badge.low-count:empty::after {
+  content: "0";
+  color: #ffffff;
+}
+
+.delivery-item:hover {
+  background-color: #f8f9fa;
+}
+
+.delivery-data {
+  padding: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.delivery-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.status-available {
+  background-color: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+}
+
+.status-busy {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+}
+
+.btn-view {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.btn-view:hover {
+  background-color: #5a6268;
+}
+
+.no-deliveries {
+  padding: 30px;
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Add these styles to your CSS file */
+
+.remote-location-badge {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 16px;
+  color: #e74c3c;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
   }
-  
-  .admin-controls {
-    width: 100%;
-    justify-content: space-between;
+  50% {
+    transform: scale(1.2);
   }
-  
-  .map-container {
-    height: 350px;
+  100% {
+    transform: scale(1);
   }
 }
 
-@media (max-width: 480px) {
-  .admin-dashboard {
-    padding: 10px;
-  }
-  
-  .dashboard-header, .map-section, .packages-section {
-    padding: 15px;
-    border-radius: 8px;
-  }
-  
-  .btn-primary, .btn-secondary {
-    padding: 10px 15px;
-    font-size: 14px;
-  }
-  
-  .admin-controls {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .map-container {
-    height: 300px;
-  }
+.delivery-person-modal {
+  max-width: 800px;
+  width: 90%;
+}
+
+.delivery-person-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.detail-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.detail-value {
+  font-size: 16px;
+}
+
+.delivery-person-map {
+  margin-bottom: 24px;
+}
+
+.delivery-person-map h4,
+.delivery-person-packages h4 {
+  margin-bottom: 12px;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.packages-mini-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.packages-mini-table th,
+.packages-mini-table td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.packages-mini-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.status-pending {
+  color: #ffc107;
+}
+
+.status-in_transit {
+  color: #17a2b8;
+}
+
+.status-delivered {
+  color: #28a745;
+}
+
+.status-cancelled {
+  color: #dc3545;
 }

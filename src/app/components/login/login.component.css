@@ -1,295 +1,340 @@
 .login-container {
-  min-height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
-  background-image: url('https://wp-manager.geti.cl/assets/2024/10/Como-mejorar-tu-delivery-5-estrategias-clave-para-cumplir-con-las-entregas.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
   padding: 20px;
   position: relative;
+  overflow: hidden;
 }
 
+/* Add decorative elements */
+.login-container::before {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  top: -100px;
+  right: -100px;
+}
 
+.login-container::after {
+  content: '';
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  bottom: -50px;
+  left: -50px;
+}
 
 .login-card {
-  background: white;
-  border-radius: 16px;
-  padding: 40px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
   width: 100%;
   max-width: 450px;
+  border-radius: 16px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
   position: relative;
-  z-index: 2;
+  z-index: 10;
 }
 
 .login-header {
   text-align: center;
-  margin-bottom: 30px;
+  padding: 2rem 1.5rem;
+  background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 100%);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #00c6ff, #0072ff, #00c6ff);
+  background-size: 200% 100%;
+  animation: gradientMove 3s linear infinite;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
 }
 
 .login-header h2 {
-  color: #2c3e50;
-  margin: 0 0 10px 0;
-  font-size: 30px;
+  margin: 0;
+  font-size: 32px;
   font-weight: 700;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .login-header p {
-  color: #7f8c8d;
-  margin: 0;
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.9);
   font-size: 16px;
+  letter-spacing: 0.5px;
 }
 
 .login-form {
-  margin-bottom: 30px;
+  padding: 2rem 1.5rem;
+  background-color: #ffffff;
 }
 
 .form-group {
-  margin-bottom: 24px;
+  margin-bottom: 1.8rem;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 0.6rem;
   color: #2c3e50;
   font-weight: 600;
   font-size: 14px;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 14px 16px;
-  border: 2px solid #ecf0f1;
-  border-radius: 10px;
-  font-size: 16px;
-  transition: all 0.3s ease;
-  box-sizing: border-box;
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-}
-
-.form-control {
-  background-color: #f8f9fa;
+  letter-spacing: 0.3px;
 }
 
 .error-message {
-  background: #ffecee;
+  background-color: #fff0f0;
   color: #e74c3c;
-  padding: 12px;
-  border-radius: 10px;
+  padding: 14px;
+  border-radius: 8px;
   margin-bottom: 20px;
   text-align: center;
   font-size: 14px;
   border-left: 4px solid #e74c3c;
-}
-
-.login-btn {
-  width: 100%;
-  padding: 16px;
-  background: linear-gradient(135deg, #ee9611 0%, #ffb83e 100%);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.primary-btn {
-  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-}
-
-.login-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 7px 15px rgba(52, 152, 219, 0.4);
-}
-
-.login-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.1);
 }
 
 .toggle-credentials {
   text-align: center;
-  margin-bottom: 15px;
+  margin: 1.2rem 0;
 }
 
-.toggle-btn {
-  background: transparent;
-  color: #3498db;
-  border: 1px solid #3498db;
-  border-radius: 20px;
-  padding: 8px 16px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.toggle-btn:hover {
-  background: #eaf2fa;
-  transform: translateY(-1px);
-}
-
-/* Update test-credentials styling */
 .test-credentials {
-  border-top: 1px solid #ecf0f1;
-  padding-top: 20px;
-  margin-top: 5px;
-  animation: fadeIn 0.3s ease;
+  animation: fadeIn 0.4s ease;
+  padding: 0 0.5rem;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
+  from { opacity: 0; transform: translateY(-15px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .test-credentials h4 {
   color: #2c3e50;
-  margin: 0 0 15px 0;
-  font-size: 18px;
+  margin: 0 0 20px 0;
+  font-size: 20px;
   text-align: center;
+  font-weight: 600;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 8px;
+}
+
+.test-credentials h4::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #4a00e0, #8e2de2);
+  border-radius: 3px;
 }
 
 .credentials-section {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 .credentials-section h5 {
   color: #34495e;
-  margin: 0 0 10px 0;
-  font-size: 16px;
+  margin: 0 0 12px 0;
+  font-size: 17px;
   font-weight: 600;
+  padding-left: 10px;
+  border-left: 3px solid #4a00e0;
 }
 
-.delivery-buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+.credential-card {
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+  border-radius: 10px;
 }
 
-.test-btn {
-  display: block;
-  width: 100%;
-  padding: 10px 12px;
-  margin-bottom: 8px;
-  border-radius: 8px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+.credential-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* Replace the colored button styles with simple-btn */
-.simple-btn {
-  background-color: #f5f5f5;
-  color: #555;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+.admin-card {
+  border-left: 4px solid #e74c3c;
 }
 
-.simple-btn:hover {
-  background-color: #fafafa;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+.delivery-card {
+  border-left: 4px solid #2ecc71;
 }
 
-/* Remove these colored button styles or comment them out
-.admin-btn {
-  border-color: #e74c3c;
-  color: #e74c3c;
-}
-
-.admin-btn:hover {
-  background: #fdedec;
-}
-
-.delivery-btn {
-  border-color: #2ecc71;
-  color: #2ecc71;
-}
-
-.delivery-btn:hover {
-  background: #eafaf1;
-}
-*/
-
-@media (max-width: 480px) {
-  .login-card {
-    padding: 30px 20px;
-  }
-  
-  .login-header h2 {
-    font-size: 24px;
-  }
-  
-  .delivery-buttons {
-    grid-template-columns: 1fr;
-  }
-}
-
-
-/* Add these new styles for credentials */
 .credential-item {
-  background-color: #f8f9fa;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 4px;
 }
 
 .credential-info {
   flex: 1;
+  padding-right: 10px;
 }
 
 .credential-email, .credential-password {
   margin: 0;
-  font-size: 13px;
-  color: #555;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .credential-email {
   font-weight: 600;
+  color: #2c3e50;
 }
 
 .credential-password {
-  font-weight: 400;
-  color: #777;
-}
-
-.use-btn {
-  background-color: #f5f5f5;
-  color: #555;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  padding: 6px 12px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.use-btn:hover {
-  background-color: #e9ecef;
-  transform: translateY(-1px);
+  font-weight: 500;
+  color: #7f8c8d;
 }
 
 .delivery-credentials {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 8px;
+  gap: 12px;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 768px) {
   .delivery-credentials {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
+}
+
+/* PrimeNG specific overrides */
+:host ::ng-deep .p-card {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  background-color: #ffffff;
+  border-radius: 12px;
+}
+
+:host ::ng-deep .p-card .p-card-content {
+  padding: 1.2rem;
+}
+
+:host ::ng-deep .credential-card .p-card-content {
+  padding: 0.8rem;
+}
+
+:host ::ng-deep .p-button.p-button-sm {
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+}
+
+:host ::ng-deep .p-password-input {
+  width: 100%;
+}
+
+:host ::ng-deep .p-inputtext {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+:host ::ng-deep .p-inputtext:enabled:focus {
+  box-shadow: 0 0 0 3px rgba(74, 0, 224, 0.2);
+  border-color: #4a00e0;
+}
+
+:host ::ng-deep .p-button.p-button-primary {
+  background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 100%);
+  border: none;
+  box-shadow: 0 4px 15px rgba(74, 0, 224, 0.3);
+  transition: all 0.3s ease;
+  border-radius: 50px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 0.75rem 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+:host ::ng-deep .p-button.p-button-primary:hover {
+  background: linear-gradient(135deg, #3b00b3 0%, #7d26c7 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(74, 0, 224, 0.4);
+}
+
+:host ::ng-deep .p-button.p-button-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(74, 0, 224, 0.3);
+}
+
+:host ::ng-deep .p-button.p-button-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
+}
+
+:host ::ng-deep .p-button.p-button-primary:hover::before {
+  left: 100%;
+}
+
+:host ::ng-deep .p-divider {
+  margin: 1.5rem 0;
+}
+
+:host ::ng-deep .p-divider .p-divider-content {
+  background-color: #ffffff;
+}
+
+:host ::ng-deep .p-card.admin-card {
+  background-color: #fff8f8;
+  border-radius: 10px;
+}
+
+:host ::ng-deep .p-card.delivery-card {
+  background-color: #f8fff9;
+  border-radius: 10px;
+}
+
+:host ::ng-deep .p-button.p-button-outlined.p-button-danger {
+  color: #e74c3c;
+  border-color: #e74c3c;
+}
+
+:host ::ng-deep .p-button.p-button-outlined.p-button-success {
+  color: #2ecc71;
+  border-color: #2ecc71;
+}
+
+:host ::ng-deep .p-input-icon-left > i {
+  left: 1rem;
+}
+
+:host ::ng-deep .p-input-icon-left > .p-inputtext {
+  padding-left: 2.5rem;
 }

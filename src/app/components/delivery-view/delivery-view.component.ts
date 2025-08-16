@@ -6,10 +6,26 @@ import { PackageService } from '../../services/package.service';
 import { AuthService } from '../../services/auth.service';
 import { interval, Subscription } from 'rxjs';
 
+// Import PrimeNG modules
+import { ToolbarModule } from 'primeng/toolbar';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { TagModule } from 'primeng/tag';
+import { RippleModule } from 'primeng/ripple';
+
 @Component({
   selector: 'app-delivery-view',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule, 
+    FormsModule,
+    // PrimeNG imports
+    ToolbarModule,
+    ButtonModule,
+    CardModule,
+    TagModule,
+    RippleModule
+  ],
   templateUrl: './delivery-view.component.html',
   styleUrls: ['./delivery-view.component.css']
 })
@@ -46,6 +62,9 @@ export class DeliveryViewComponent implements OnInit, AfterViewInit, OnDestroy {
         console.log('Usuario actualizado:', user);
         // Recargar paquetes asignados cuando cambie el usuario
         this.loadAssignedPackages();
+        
+        // Get real device location when user logs in
+        this.getCurrentLocation();
       }
     });
     
@@ -53,7 +72,9 @@ export class DeliveryViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadAssignedPackages();
     
     // Iniciar el intervalo de actualización de ubicación
-    this.startLocationSharing();
+    if (isPlatformBrowser(this.platformId)) {
+      this.startLocationSharing();
+    }
   }
 
   ngAfterViewInit(): void {
@@ -76,7 +97,7 @@ export class DeliveryViewComponent implements OnInit, AfterViewInit, OnDestroy {
       // Crear nueva suscripción que se ejecuta cada 10 segundos
       this.locationUpdateSubscription = interval(10000).subscribe(() => {
         if (this.isLocationSharing) {
-          // Obtener ubicación actual (en una app real, usaríamos geolocalización)
+          // Obtener ubicación actual y compartirla
           this.updateAndShareLocation();
         }
       });
@@ -97,25 +118,135 @@ export class DeliveryViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
   
+  // Método para obtener la ubicación actual del dispositivo
+  private getCurrentLocation(): void {
+    if (isPlatformBrowser(this.platformId) && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          console.log('Ubicación real obtenida:', latitude, longitude);
+          
+          // Actualizar la ubicación actual
+          this.currentLocation = { lat: latitude, lng: longitude };
+          
+          // Si el mapa ya está inicializado, actualizar la vista y el marcador
+          if (this.map) {
+            this.map.setView([latitude, longitude], 15);
+            this.addDeliveryPersonMarker();
+          }
+          
+          // Compartir la ubicación real con el servidor
+          this.updateAndShareLocation();
+        },
+        (error) => {
+          console.error('Error obteniendo ubicación real:', error);
+          // Fallback a la ubicación por defecto (UTEQ)
+          console.log('Usando ubicación por defecto (UTEQ)');
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        }
+      );
+    } else {
+      console.log('Geolocalización no disponible o no estamos en el navegador');
+    }
+  }
+  
   // Actualizar y compartir ubicación
   private updateAndShareLocation(): void {
-    // En una app real, obtendríamos la ubicación actual del dispositivo
-    // Para esta demo, usamos la ubicación simulada
+    // Intentar obtener la ubicación actual si estamos compartiendo ubicación
+    if (isPlatformBrowser(this.platformId) && navigator.geolocation && this.isLocationSharing) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          
+          console.log('Nueva ubicación obtenida:', latitude, longitude);
+          
+          // Actualizar la ubicación actual
+          this.currentLocation = { lat: latitude, lng: longitude };
+          
+          // Actualizar el marcador si el mapa está inicializado
+          if (this.map && this.currentMarker) {
+            this.addDeliveryPersonMarker();
+          }
+          
+          // Enviar la ubicación actualizada al servidor
+          this.sendLocationToServer(latitude, longitude);
+        },
+        (error) => {
+          console.error('Error obteniendo ubicación en tiempo real:', error);
+          // Usar la ubicación actual (que podría ser la última conocida o la predeterminada)
+          this.sendLocationToServer(this.currentLocation.lat, this.currentLocation.lng);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0
+        }
+      );
+    } else {
+      // Si no podemos obtener la ubicación real, usar la ubicación actual
+      this.sendLocationToServer(this.currentLocation.lat, this.currentLocation.lng);
+    }
+  }
+
+  // Método para enviar la ubicación al servidor
+  // Añadir propiedad para controlar la notificación
+  public showLocationUpdateNotification: boolean = false;
+  public notificationMessage: string = '';
+  
+  private sendLocationToServer(latitude: number, longitude: number): void {
+    if (!this.deliveryPersonId) {
+      console.error('No hay ID de repartidor disponible');
+      return;
+    }
     
-    // Enviar ubicación al servidor
+    console.log(`Enviando ubicación al servidor: ${latitude}, ${longitude} para repartidor ID: ${this.deliveryPersonId}`);
+    
     this.packageService.updateDeliveryLocation(
       this.deliveryPersonId, 
-      this.currentLocation.lat, 
-      this.currentLocation.lng,
+      latitude, 
+      longitude,
       this.isAvailable
     ).subscribe({
       next: (response) => {
         console.log('Ubicación compartida con éxito:', response);
+        // Actualizar datos del usuario si es necesario
+        if (response.user) {
+          this.deliveryPerson = response.user;
+        }
+        
+        // Mostrar notificación de actualización
+        this.showNotification(`Ubicación actualizada: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
       },
       error: (error) => {
         console.error('Error al compartir ubicación:', error);
+        this.showNotification('Error al actualizar ubicación', true);
       }
     });
+  }
+  
+  // Método para mostrar notificación
+  private showNotification(message: string, isError: boolean = false): void {
+    this.notificationMessage = message;
+    this.showLocationUpdateNotification = true;
+    
+    // Cambiar el estilo según si es error o no
+    const notificationElement = document.getElementById('location-notification');
+    if (notificationElement) {
+      if (isError) {
+        notificationElement.classList.add('error-notification');
+      } else {
+        notificationElement.classList.remove('error-notification');
+      }
+    }
+    
+    // Ocultar la notificación después de 3 segundos
+    setTimeout(() => {
+      this.showLocationUpdateNotification = false;
+    }, 3000);
   }
   
   // Toggle para activar/desactivar compartición de ubicación

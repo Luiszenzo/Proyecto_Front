@@ -34,4 +34,14 @@ export class MapService {
   deleteLocation(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/locations/${id}`);
   }
+
+  // Nuevo método para obtener el historial de ubicaciones de un repartidor
+  getLocationHistory(deliveryPersonId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/locations/history/${deliveryPersonId}`);
+  }
+
+  // Update this method to use the correct endpoint
+  getDeliveryLocations(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/deliveries/locations`);
+  }
 }
