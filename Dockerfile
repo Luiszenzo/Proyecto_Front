@@ -7,21 +7,22 @@ RUN npm install
 
 COPY . .
 RUN npm run build
+# List the build output to see the structure
+RUN ls -la dist/mapa-front
 
 FROM nginx:alpine
 
 # Remove default nginx website
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copy build files from the Angular app
-# Note: The path might need adjustment based on your Angular output structure
-COPY --from=build /app/dist/mapa-front/browser /usr/share/nginx/html
+# Copy the Angular build files directly
+COPY --from=build /app/dist/mapa-front /usr/share/nginx/html
 
-# Copy custom nginx config
+# Copy custom nginx config - replace the default.conf
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# For debugging - list the contents of the html directory
-RUN ls -la /usr/share/nginx/html
+# Also replace the main nginx.conf to ensure our config is used
+COPY nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 3000
 
